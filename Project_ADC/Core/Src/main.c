@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "adc.h"
+#include "dma.h"
 #include "rtc.h"
 #include "usart.h"
 #include "gpio.h"
@@ -40,7 +41,8 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+	uint16_t cnt = 0;
+	uint16_t ADC_Value[1];
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -53,8 +55,7 @@
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 //uint16_t Get_Adc();
-uint16_t ADC_Value = 0;
-uint16_t cnt = 0;
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -80,6 +81,7 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -100,11 +102,13 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_USART2_UART_Init();
   MX_ADC1_Init();
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
-
+  //HAL_ADCEx_Calibration_Start(&hdac1);
+  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&ADC_Value, 1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -116,7 +120,7 @@ int main(void)
     /* USER CODE BEGIN 3 */
 	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
 	  cnt ++;
-	  ADC_Value = Get_Adc();
+//	  ADC_Value = Get_Adc();
 	  printf("Digital Value of sine = %d\n", ADC_Value);
 
   }
@@ -191,15 +195,6 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
-//uint16_t Get_Adc(){
-//  HAL_ADC_Start(&hadc1);
-//  HAL_ADC_PollForConversion(&hadc1,100);  //判断ADC是否转换成功
-//  if(HAL_IS_BIT_SET(HAL_ADC_GetState(&hadc1),HAL_ADC_STATE_REG_EOC)){
-//       return HAL_ADC_GetValue(&hadc1);
-//    }
-//    return 0;
-//}
 
 #ifdef  USE_FULL_ASSERT
 /**

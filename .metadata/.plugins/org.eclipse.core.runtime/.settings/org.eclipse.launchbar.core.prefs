@@ -5,3 +5,4 @@ configDescList=org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Blink Debug,org.
 eclipse.preferences.version=1
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Blink\ Debug/activeLaunchMode=debug
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Blink\ Debug/activeLaunchTarget=null\:---
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Project_ADC\ Debug/activeLaunchMode=debug
