@@ -1,17 +1,10 @@
-21:12:07 **** Incremental Build of configuration Debug for project Project_ADC ****
+21:46:31 **** Incremental Build of configuration Debug for project Project_ADC ****
 make -j16 all 
-arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L476xx -c -I../Core/Inc -IC:/Users/Razer/STM32Cube/Repository/STM32Cube_FW_L4_V1.17.2/Drivers/STM32L4xx_HAL_Driver/Inc -IC:/Users/Razer/STM32Cube/Repository/STM32Cube_FW_L4_V1.17.2/Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -IC:/Users/Razer/STM32Cube/Repository/STM32Cube_FW_L4_V1.17.2/Drivers/CMSIS/Device/ST/STM32L4xx/Include -IC:/Users/Razer/STM32Cube/Repository/STM32Cube_FW_L4_V1.17.2/Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
-arm-none-eabi-gcc -o "Project_ADC.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\ST\WorkSpace\Project_ADC\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Project_ADC.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: Project_ADC.elf
- 
 arm-none-eabi-size   Project_ADC.elf 
-arm-none-eabi-objdump -h -S  Project_ADC.elf  > "Project_ADC.list"
    text	   data	    bss	    dec	    hex	filename
   23544	    120	   1864	  25528	   63b8	Project_ADC.elf
 Finished building: default.size.stdout
  
-Finished building: Project_ADC.list
- 
 
-21:12:08 Build Finished. 0 errors, 0 warnings. (took 979ms)
+21:46:31 Build Finished. 0 errors, 0 warnings. (took 427ms)
 

@@ -75,6 +75,7 @@
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="MyLibrary"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -170,5 +171,13 @@
 		<scannerConfigBuildInfo instanceId="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.173394186;com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.173394186.;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.2004373786;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1805304713">
 			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
+	</storageModule>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/Project_ADC"/>
+		</configuration>
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/Project_ADC"/>
+		</configuration>
 	</storageModule>
 </cproject>
