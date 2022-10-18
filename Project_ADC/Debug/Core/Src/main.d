@@ -33,7 +33,8 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  C:/Users/Razer/STM32Cube/Repository/STM32Cube_FW_L4_V1.17.2/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h \
  C:/Users/Razer/STM32Cube/Repository/STM32Cube_FW_L4_V1.17.2/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h \
  ../Core/Inc/adc.h ../Core/Inc/main.h ../Core/Inc/dma.h ../Core/Inc/rtc.h \
- ../Core/Inc/usart.h ../Core/Inc/gpio.h ../Core/Src/../../MyLibrary/adc.h
+ ../Core/Inc/usart.h ../Core/Inc/gpio.h ../Core/Src/../../MyLibrary/adc.h \
+ ../Core/Src/../../MyLibrary/fft.h ../Core/Src/../../MyLibrary/LCD.h
 ../Core/Inc/main.h:
 C:/Users/Razer/STM32Cube/Repository/STM32Cube_FW_L4_V1.17.2/Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h:
 ../Core/Inc/stm32l4xx_hal_conf.h:
@@ -75,3 +76,5 @@ C:/Users/Razer/STM32Cube/Repository/STM32Cube_FW_L4_V1.17.2/Drivers/STM32L4xx_HA
 ../Core/Inc/usart.h:
 ../Core/Inc/gpio.h:
 ../Core/Src/../../MyLibrary/adc.h:
+../Core/Src/../../MyLibrary/fft.h:
+../Core/Src/../../MyLibrary/LCD.h:

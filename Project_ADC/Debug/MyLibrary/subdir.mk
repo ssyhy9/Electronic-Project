@@ -5,13 +5,19 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../MyLibrary/adc.c 
+../MyLibrary/LCD.c \
+../MyLibrary/adc.c \
+../MyLibrary/fft.c 
 
 OBJS += \
-./MyLibrary/adc.o 
+./MyLibrary/LCD.o \
+./MyLibrary/adc.o \
+./MyLibrary/fft.o 
 
 C_DEPS += \
-./MyLibrary/adc.d 
+./MyLibrary/LCD.d \
+./MyLibrary/adc.d \
+./MyLibrary/fft.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -21,7 +27,7 @@ MyLibrary/%.o MyLibrary/%.su: ../MyLibrary/%.c MyLibrary/subdir.mk
 clean: clean-MyLibrary
 
 clean-MyLibrary:
-	-$(RM) ./MyLibrary/adc.d ./MyLibrary/adc.o ./MyLibrary/adc.su
+	-$(RM) ./MyLibrary/LCD.d ./MyLibrary/LCD.o ./MyLibrary/LCD.su ./MyLibrary/adc.d ./MyLibrary/adc.o ./MyLibrary/adc.su ./MyLibrary/fft.d ./MyLibrary/fft.o ./MyLibrary/fft.su
 
 .PHONY: clean-MyLibrary
 

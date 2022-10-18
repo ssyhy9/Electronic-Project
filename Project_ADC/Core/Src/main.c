@@ -28,6 +28,8 @@
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include "../../MyLibrary/adc.h"
+#include "../../MyLibrary/fft.h"
+#include "../../MyLibrary/LCD.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,7 +44,7 @@
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
 	uint16_t cnt = 0;
-	uint16_t ADC_Value[1];
+	uint16_t ADC_Value[50];
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -108,7 +110,24 @@ int main(void)
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
   //HAL_ADCEx_Calibration_Start(&hdac1);
-  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&ADC_Value, 1);
+  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&ADC_Value, 50);
+
+  // Lcd_PortType ports[] = { D4_GPIO_Port, D5_GPIO_Port, D6_GPIO_Port, D7_GPIO_Port };
+    Lcd_PortType ports[] = { GPIOC, GPIOB, GPIOA, GPIOA };
+    // Lcd_PinType pins[] = {D4_Pin, D5_Pin, D6_Pin, D7_Pin};
+    Lcd_PinType pins[] = {GPIO_PIN_7, GPIO_PIN_6, GPIO_PIN_9, GPIO_PIN_6};
+    Lcd_HandleTypeDef lcd;
+    // Lcd_create(ports, pins, RS_GPIO_Port, RS_Pin, EN_GPIO_Port, EN_Pin, LCD_4_BIT_MODE);
+    lcd = Lcd_create(ports, pins, GPIOB, GPIO_PIN_5, GPIOB, GPIO_PIN_4, LCD_4_BIT_MODE);
+    Lcd_cursor(&lcd, 0,1);
+    Lcd_string(&lcd, "$$$$$$$$$$");
+      for ( int x = 1; x <= 200 ; x++ )
+      {
+        Lcd_cursor(&lcd, 1,7);
+        Lcd_int(&lcd, x);
+        HAL_Delay (1000);
+      }
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -118,10 +137,13 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+//	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
 	  cnt ++;
 //	  ADC_Value = Get_Adc();
-	  printf("Digital Value of sine = %d\n", ADC_Value);
+	  //printf("Digital Value of sine = %d\n", ADC_Value[0]);
+//	  for(int n = 0; n < 10; n ++){
+//		  printf("%d\r\n", ADC_Value[n]);
+//	  }
 
   }
   /* USER CODE END 3 */
