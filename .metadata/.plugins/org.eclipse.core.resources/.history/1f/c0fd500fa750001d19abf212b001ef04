@@ -117,7 +117,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	  uint16_t current_state;
-	  current_state = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8);  //PB8
+	  current_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13);  //PB8
 
 
 	  if(current_state != previous_state){

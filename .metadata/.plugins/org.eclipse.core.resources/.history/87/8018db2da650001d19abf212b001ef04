@@ -117,8 +117,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	  uint16_t current_state;
-	  current_state = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8);  //PB8
-
+	  current_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13);  //PB8
 
 	  if(current_state != previous_state){
 		  pin_flag = 1;
@@ -206,7 +205,7 @@ static void MX_TIM2_Init(void)
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 80-1;
+  htim2.Init.Prescaler = 8000-1;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim2.Init.Period = 10000-1;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -303,12 +302,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : PB8 */
-  GPIO_InitStruct.Pin = GPIO_PIN_8;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }
 

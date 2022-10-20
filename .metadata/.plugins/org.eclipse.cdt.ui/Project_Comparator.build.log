@@ -1,10 +1,17 @@
-16:04:42 **** Incremental Build of configuration Debug for project Project_Comparator ****
+19:43:16 **** Incremental Build of configuration Debug for project Project_Comparator ****
 make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L476xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "Project_Comparator.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\ST\WorkSpace\Project_Comparator\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Project_Comparator.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Project_Comparator.elf
+ 
 arm-none-eabi-size   Project_Comparator.elf 
+arm-none-eabi-objdump -h -S  Project_Comparator.elf  > "Project_Comparator.list"
    text	   data	    bss	    dec	    hex	filename
-  19932	    120	   1808	  21860	   5564	Project_Comparator.elf
+  19960	    120	   1808	  21888	   5580	Project_Comparator.elf
 Finished building: default.size.stdout
  
+Finished building: Project_Comparator.list
+ 
 
-16:04:43 Build Finished. 0 errors, 0 warnings. (took 512ms)
+19:43:17 Build Finished. 0 errors, 0 warnings. (took 853ms)
 
