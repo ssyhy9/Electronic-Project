@@ -24,6 +24,8 @@
 #include "usart.h"
 #include "gpio.h"
 
+#include "arm_math.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
@@ -45,6 +47,9 @@
 /* USER CODE BEGIN PM */
 	uint16_t cnt = 0;
 	uint16_t ADC_Value[50];
+	Lcd_HandleTypeDef* store;
+
+
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -109,24 +114,39 @@ int main(void)
   MX_ADC1_Init();
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
+  uint32_t Buff_In[50];
+  float Buff_Out[50];
+
   //HAL_ADCEx_Calibration_Start(&hdac1);
   HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&ADC_Value, 50);
+
+  arm_rfft_fast_instance_f32 fft_handler;
+  arm_rfft_fast_init_f32(&fft_handler, 512);
 
   // Lcd_PortType ports[] = { D4_GPIO_Port, D5_GPIO_Port, D6_GPIO_Port, D7_GPIO_Port };
     Lcd_PortType ports[] = { GPIOC, GPIOB, GPIOA, GPIOA };
     // Lcd_PinType pins[] = {D4_Pin, D5_Pin, D6_Pin, D7_Pin};
     Lcd_PinType pins[] = {GPIO_PIN_7, GPIO_PIN_6, GPIO_PIN_9, GPIO_PIN_6};
     Lcd_HandleTypeDef lcd;
+
     // Lcd_create(ports, pins, RS_GPIO_Port, RS_Pin, EN_GPIO_Port, EN_Pin, LCD_4_BIT_MODE);
     lcd = Lcd_create(ports, pins, GPIOB, GPIO_PIN_5, GPIOB, GPIO_PIN_4, LCD_4_BIT_MODE);
+
+    store = &lcd;
+
     Lcd_cursor(&lcd, 0,1);
-    Lcd_string(&lcd, "$$$$$$$$$$");
-      for ( int x = 1; x <= 200 ; x++ )
+    Lcd_string(&lcd, "$$$$$$$$$$$$$$");
+      for ( int x = 1; x <= 100 ; x++ )
       {
         Lcd_cursor(&lcd, 1,7);
         Lcd_int(&lcd, x);
-        HAL_Delay (1000);
+        HAL_Delay (100);
       }
+
+
+
+//      Lcd_clear(store);
+//      ChangeUnit(&lcd);
 
   /* USER CODE END 2 */
 
@@ -135,8 +155,22 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+	  if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13) == 0){
+		  Lcd_clear(store);
+	  }
+
+	  for(int n = 0; n < 50; n++){
+		  Buff_In[n] = ADC_Value[n] - 2048;
+	  }
+
+//	  arm_rfft_fast_f32(&fft, Buff_In, Buff_Out, 0);
+
+
+
 
     /* USER CODE BEGIN 3 */
+
+
 //	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
 	  cnt ++;
 //	  ADC_Value = Get_Adc();
@@ -200,7 +234,17 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+__weak void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  /* Prevent unused argument(s) compilation warning */
+//  UNUSED(GPIO_Pin);
+  cnt ++;
+  Lcd_clear(store);
 
+  /* NOTE: This function should not be modified, when the callback is needed,
+           the HAL_GPIO_EXTI_Callback could be implemented in the user file
+   */
+}
 /* USER CODE END 4 */
 
 /**

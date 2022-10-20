@@ -1,0 +1,10 @@
+16:04:42 **** Incremental Build of configuration Debug for project Project_Comparator ****
+make -j16 all 
+arm-none-eabi-size   Project_Comparator.elf 
+   text	   data	    bss	    dec	    hex	filename
+  19932	    120	   1808	  21860	   5564	Project_Comparator.elf
+Finished building: default.size.stdout
+ 
+
+16:04:43 Build Finished. 0 errors, 0 warnings. (took 512ms)
+
