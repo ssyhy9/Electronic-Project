@@ -62,7 +62,7 @@ main-build: Project_ADC.elf secondary-outputs
 
 # Tool invocations
 Project_ADC.elf Project_ADC.map: $(OBJS) $(USER_OBJS) D:\ST\WorkSpace\Project_ADC\STM32L476RGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Project_ADC.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\ST\WorkSpace\Project_ADC\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Project_ADC.map" -Wl,--gc-sections -static -L"D:\ST\WorkSpace\Project_ADC\Drivers\CMSIS\Lib\GCC" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+	arm-none-eabi-gcc -o "Project_ADC.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\ST\WorkSpace\Project_ADC\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Project_ADC.map" -Wl,--gc-sections -static -L"D:\ST\WorkSpace\Project_ADC\Drivers\CMSIS\Lib\GCC" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

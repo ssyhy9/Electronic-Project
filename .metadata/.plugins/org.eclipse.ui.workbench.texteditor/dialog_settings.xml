@@ -6,11 +6,12 @@
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
-		<item key="selection" value="arm_rfft_fast_f32"/>
+		<item key="selection" value="Buff_Out"/>
 		<list key="findhistory">
+			<item value="nums"/>
+			<item value="arm_cfft_f32"/>
 			<item value="arm_rfft_fast_f32"/>
 			<item value="arm_rfft_fast_init_f32"/>
-			<item value="arm_cfft_f32"/>
 			<item value="cr4_fft_256_stm32"/>
 			<item value="arm_rfft_fast_instance_f32"/>
 			<item value="fft_handler"/>
@@ -21,6 +22,7 @@
 			<item value="fft"/>
 		</list>
 		<list key="replacehistory">
+			<item value="Buff_Out"/>
 			<item value=""/>
 		</list>
 	</section>
