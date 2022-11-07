@@ -6,8 +6,9 @@
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
-		<item key="selection" value="Buff_Out"/>
+		<item key="selection" value="ADC_Value"/>
 		<list key="findhistory">
+			<item value="ADC_Value"/>
 			<item value="nums"/>
 			<item value="arm_cfft_f32"/>
 			<item value="arm_rfft_fast_f32"/>

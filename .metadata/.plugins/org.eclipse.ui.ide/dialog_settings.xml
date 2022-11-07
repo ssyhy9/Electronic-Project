@@ -9,6 +9,8 @@
 		<item key="SmartImportRootWizardPage.STORE_NESTED_PROJECTS" value="true"/>
 		<item key="SmartImportRootWizardPage.STORE_CONFIGURE_NATURES" value="true"/>
 		<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+			<item value="D:\ST\WorkSpace\Project_ADC"/>
+			<item value="D:\GithubDownload\Electronic-Project-main\Project_ADC"/>
 			<item value="D:\STM32 AGV\AGV\AGV_control_C"/>
 		</list>
 	</section>

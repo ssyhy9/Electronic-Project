@@ -19,12 +19,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "adc.h"
-#include "dma.h"
 #include "rtc.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
-
-#include "arm_math.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -32,6 +30,10 @@
 #include "../../MyLibrary/adc.h"
 #include "../../MyLibrary/fft.h"
 #include "../../MyLibrary/LCD.h"
+#include "arm_math.h"
+#include "arm_const_structs.h"
+
+//bool flag;
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -46,12 +48,18 @@
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
 	uint16_t cnt = 0;
+	uint32_t freq = 0;
+	uint16_t freq_flag = 0;
 	uint16_t ADC_Value[FFT_LENGTH];
 	float32_t ADC_In[FFT_LENGTH];
 	float32_t Buff_In[FFT_LENGTH * 2];
 	float32_t Buff_Out[FFT_LENGTH];
 	Lcd_HandleTypeDef* store;
-	arm_cfft_instance_f32 fft;
+	//arm_cfft_instance_f32 fft;
+	int i = 0;
+	int lastValue = 0;
+	float32_t frequency = 0;
+
 
 
 /* USER CODE END PM */
@@ -113,32 +121,34 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
   MX_USART2_UART_Init();
   MX_ADC1_Init();
   MX_RTC_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
   //HAL_ADCEx_Calibration_Start(&hdac1);
-  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&ADC_Value, FFT_LENGTH);
+  //HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&ADC_Value, FFT_LENGTH);
+  //HAL_TIM_Base_Start_IT(&htim2);
 
+  	//LCD initialization
     Lcd_PortType ports[] = { GPIOC, GPIOB, GPIOA, GPIOA };
     Lcd_PinType pins[] = {GPIO_PIN_7, GPIO_PIN_6, GPIO_PIN_9, GPIO_PIN_6};
     Lcd_HandleTypeDef lcd;
 
     lcd = Lcd_create(ports, pins, GPIOB, GPIO_PIN_5, GPIOB, GPIO_PIN_4, LCD_4_BIT_MODE);
 
-//    Lcd_cursor(&lcd, 0,1);
-//    Lcd_string(&lcd, "$$$$$$$$$$$$$$");
-//      for ( int x = 1; x <= 100 ; x++ )
-//      {
-//        Lcd_cursor(&lcd, 1,7);
-//        Lcd_int(&lcd, x);
-//        HAL_Delay (100);
-//      }
+    Lcd_cursor(&lcd, 0,1);
+    Lcd_string(&lcd, "$$$$$$$$$$$$$$");
+      for ( int x = 1; x <= 100 ; x++ )
+      {
+        Lcd_cursor(&lcd, 1,7);
+        Lcd_int(&lcd, x);
+        HAL_Delay (100);
+      }
 
-//      Lcd_clear(store);
-//      ChangeUnit(&lcd);
+      Lcd_clear(&lcd);
+      //ChangeUnit(&lcd);
 
   /* USER CODE END 2 */
 
@@ -151,52 +161,67 @@ int main(void)
 //	  if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13) == 0){
 //		  Lcd_clear(store);
 //	  }
+	  if(i == FFT_LENGTH){
 
-	  //Store the ADC value in an array ASAP
-	  for(int i = 0; i < FFT_LENGTH; i++){
-		//  ADC_In[i] = ADC_Value[i] * 3.3 / 4096;
-		  ADC_In[i] = ADC_Value[i];
+//		  for(int i = 0; i < FFT_LENGTH; i++){
+//		//	  ADC_In[i] = ADC_In[i] * 3.3 / 4096;
+//			  ADC_In[i] = ADC_Value[i];
+//		  }
+
+//		  //Calculate Mean
+//		  float32_t average = 0, sum = 0;
+//		  for(int i = 0; i < FFT_LENGTH; i++){
+//			  sum += ADC_In[i];
+//		  }
+//		  average = sum / FFT_LENGTH;
+
+		  //Initialize Buff_In
+		  for (int i = 0; i < FFT_LENGTH; i++)
+		  {
+			  //Buff_In[i * 2] = ADC_In[i] - average;
+			  Buff_In[i * 2] = ADC_In[i]*3.3/4096;
+			  Buff_In[i * 2 + 1] = 0;
+		  }
+
+		  //Perform FFT
+		  arm_cfft_f32(&arm_cfft_sR_f32_len1024, Buff_In, 0, 1);
+		  arm_cmplx_mag_f32(Buff_In, Buff_Out, FFT_LENGTH);
+
+		  //FFT output regulation
+		  Buff_Out[0] /= 1024;
+		  for(int i = 0; i < FFT_LENGTH; i++){
+			  Buff_Out[i] /= 512;
+		  }
+
+		  //Find the maximum magnitude and its index
+		  uint32_t index = 0;
+		  for(int i = 1; i < FFT_LENGTH; i++){
+			 if(Buff_Out[i] > Buff_Out[index]){
+			   index = i;
+			 }
+		  }
+		  printf("%.4f %d\r\n", Buff_Out[index], index);
+
+
+		  frequency = index * 250000.0 / FFT_LENGTH / 2.5;
+		  frequency = (int)frequency;
+
+		  //Display frequency on LCD
+		  Lcd_cursor(&lcd, 0, 1);
+		  Lcd_int(&lcd, frequency);
+
+		  //Reset i to 0
+		  i = 0;
+		  }
+
+	  else{
+		  ADC_In[i] = Get_Adc();
+		  i++;
 	  }
-
-//	  //Calculate Mean
-//	  float32_t average = 0, sum = 0;
-//	  for(int i = 0; i < FFT_LENGTH; i++){
-//		  sum += ADC_In[i];
-//	  }
-//	  average = sum / FFT_LENGTH;
-//
-//	  //Initialize Buff_In
-//	  for (int i = 0; i < FFT_LENGTH; i++)
-//	  {
-//	      Buff_In[i * 2] = ADC_In[i] - average;
-//	      Buff_In[i * 2 + 1] = 0;
-//	  }
-//
-//	  //Perform FFT
-//	  arm_cfft_f32(&fft, Buff_In, 0, 1);
-//	  arm_cmplx_mag_f32(Buff_In, Buff_Out, FFT_LENGTH);
-//
-//	  //Find the maximum magnitude and its index
-//	  uint32_t index = 0;
-//	  for(int i = 1; i < FFT_LENGTH; i++){
-//	  	 if(Buff_Out[i] > Buff_Out[index]){
-//	  	   index = i;
-//	  	 }
-//	  }
-//	  printf("%.4f %d\r\n", Buff_Out[index], index);
-
-
-
-
-
 
 
 //	  arm_rfft_fast_f32(&fft, Buff_In, Buff_Out, 0);
     /* USER CODE END WHILE */
-
-
-
-
 
     /* USER CODE BEGIN 3 */
 
@@ -274,6 +299,21 @@ __weak void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
            the HAL_GPIO_EXTI_Callback could be implemented in the user file
    */
 }
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+	if(i == FFT_LENGTH)
+	{
+		lastValue = 0;
+		return;
+	}
+	else
+	{
+		freq = 10000 * (i - lastValue);
+		lastValue = i;
+	}
+}
+
 /* USER CODE END 4 */
 
 /**
