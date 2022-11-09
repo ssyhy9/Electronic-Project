@@ -47,18 +47,22 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-	uint16_t cnt = 0;
 	uint32_t freq = 0;
 	uint16_t freq_flag = 0;
-	uint16_t ADC_Value[FFT_LENGTH];
 	float32_t ADC_In[FFT_LENGTH];
 	float32_t Buff_In[FFT_LENGTH * 2];
 	float32_t Buff_Out[FFT_LENGTH];
-	Lcd_HandleTypeDef* store;
-	//arm_cfft_instance_f32 fft;
+
+	uint16_t cnt = 0;
+	uint16_t previous_state;
+	uint16_t pin_flag;
+	uint16_t comparatorFrequency = 0;
+	uint16_t comparatorFlag = 0;
 	int i = 0;
 	int lastValue = 0;
 	float32_t frequency = 0;
+	uint16_t buttonState = 0;
+	uint16_t previousState = 0;
 
 
 
@@ -125,11 +129,14 @@ int main(void)
   MX_ADC1_Init();
   MX_RTC_Init();
   MX_TIM2_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
 
   //HAL_ADCEx_Calibration_Start(&hdac1);
   //HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&ADC_Value, FFT_LENGTH);
   //HAL_TIM_Base_Start_IT(&htim2);
+  HAL_TIM_Base_Start_IT(&htim3);
+  int timer3Val = __HAL_TIM_GET_COUNTER(&htim3);
 
   	//LCD initialization
     Lcd_PortType ports[] = { GPIOC, GPIOB, GPIOA, GPIOA };
@@ -140,7 +147,7 @@ int main(void)
 
     Lcd_cursor(&lcd, 0,1);
     Lcd_string(&lcd, "$$$$$$$$$$$$$$");
-      for ( int x = 1; x <= 100 ; x++ )
+      for ( int x = 1; x <= 50 ; x++ )
       {
         Lcd_cursor(&lcd, 1,7);
         Lcd_int(&lcd, x);
@@ -156,84 +163,108 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
-	  cnt ++;
-//	  if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13) == 0){
-//		  Lcd_clear(store);
-//	  }
-	  if(i == FFT_LENGTH){
-
-//		  for(int i = 0; i < FFT_LENGTH; i++){
-//		//	  ADC_In[i] = ADC_In[i] * 3.3 / 4096;
-//			  ADC_In[i] = ADC_Value[i];
-//		  }
-
-//		  //Calculate Mean
-//		  float32_t average = 0, sum = 0;
-//		  for(int i = 0; i < FFT_LENGTH; i++){
-//			  sum += ADC_In[i];
-//		  }
-//		  average = sum / FFT_LENGTH;
-
-		  //Initialize Buff_In
-		  for (int i = 0; i < FFT_LENGTH; i++)
-		  {
-			  //Buff_In[i * 2] = ADC_In[i] - average;
-			  Buff_In[i * 2] = ADC_In[i]*3.3/4096;
-			  Buff_In[i * 2 + 1] = 0;
+	  if(buttonState == 0){
+		  if(buttonState != previousState){
+			  Lcd_clear(&lcd);
+		  	  previousState = buttonState;
 		  }
-
-		  //Perform FFT
-		  arm_cfft_f32(&arm_cfft_sR_f32_len1024, Buff_In, 0, 1);
-		  arm_cmplx_mag_f32(Buff_In, Buff_Out, FFT_LENGTH);
-
-		  //FFT output regulation
-		  Buff_Out[0] /= 1024;
-		  for(int i = 0; i < FFT_LENGTH; i++){
-			  Buff_Out[i] /= 512;
-		  }
-
-		  //Find the maximum magnitude and its index
-		  uint32_t index = 0;
-		  for(int i = 1; i < FFT_LENGTH; i++){
-			 if(Buff_Out[i] > Buff_Out[index]){
-			   index = i;
-			 }
-		  }
-		  printf("%.4f %d\r\n", Buff_Out[index], index);
-
-
-		  frequency = index * 250000.0 / FFT_LENGTH / 2.5;
-		  frequency = (int)frequency;
-
-		  //Display frequency on LCD
-		  Lcd_cursor(&lcd, 0, 1);
-		  Lcd_int(&lcd, frequency);
-
-		  //Reset i to 0
-		  i = 0;
-		  }
-
-	  else{
-		  ADC_In[i] = Get_Adc();
-		  i++;
+		  Lcd_cursor(&lcd, 0, 5);
+		  Lcd_string(&lcd, "WELCOME!");
 	  }
 
+	  //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ comparator code $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+	  if(buttonState == 1){
+		  if(buttonState != previousState){
+			  Lcd_clear(&lcd);
+		  	  previousState = buttonState;
+		  }
+	  	  while(__HAL_TIM_GET_COUNTER(&htim3) - timer3Val < 10000){
+			  comparatorFlag = 1;
+			  uint16_t current_state;
+			  current_state = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8);  //PB8
 
-//	  arm_rfft_fast_f32(&fft, Buff_In, Buff_Out, 0);
+			  if(current_state != previous_state){
+				  pin_flag = 1;
+			  }
+			  else
+				  pin_flag = 0;
+
+			  if(pin_flag == 1){
+				  cnt ++;
+				  previous_state = current_state;
+			  }
+			  else
+				  previous_state = current_state;
+	  	  }
+
+	  	  printf("Comp Freq: %d\r\n", cnt/=2);
+		  Lcd_cursor(&lcd, 0, 1);
+		  Lcd_int(&lcd, (int)(cnt/=2));
+
+	  	  cnt = 0;
+	  	  timer3Val = __HAL_TIM_GET_COUNTER(&htim3);
+
+
+	  }
+
+	  //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ ADC code $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+	  if(buttonState == 2){
+		  if(buttonState != previousState){
+			  Lcd_clear(&lcd);
+			  previousState = buttonState;
+		  }
+	  	  for(int i = 0; i < FFT_LENGTH; i++){
+	  		ADC_In[i] = Get_Adc();
+	  	  }
+
+	  	 // if(i == FFT_LENGTH){
+	  		  comparatorFlag = 0;
+	  		  cnt = 0;
+	  		  //Initialize Buff_In
+	  		  for (int i = 0; i < FFT_LENGTH; i++)
+	  		  {
+	  			  Buff_In[i * 2] = ADC_In[i]*3.3/4096;
+	  			  Buff_In[i * 2 + 1] = 0;
+	  		  }
+
+	  		  //Perform FFT
+	  		  arm_cfft_f32(&arm_cfft_sR_f32_len1024, Buff_In, 0, 1);
+	  		  arm_cmplx_mag_f32(Buff_In, Buff_Out, FFT_LENGTH);
+
+	  		  //FFT output regulation
+	  		  Buff_Out[0] /= 1024;
+	  		  for(int i = 0; i < FFT_LENGTH; i++){
+	  			  Buff_Out[i] /= 512;
+	  		  }
+
+	  		  //Find the maximum magnitude and its index
+	  		  uint32_t index = 0;
+	  		  for(int i = 1; i < FFT_LENGTH; i++){
+	  			 if(Buff_Out[i] > Buff_Out[index]){
+	  			   index = i;
+	  			 }
+	  		  }
+	  		  //printf("%.4f %d\r\n", Buff_Out[index], index);
+
+	  		  frequency = index * 250000.0 / FFT_LENGTH / 2.5;
+
+	  		  //Display frequency on LCD
+	  		  if(frequency < 3000){
+	  			  printf("FFT: %d    ||    ", (int)frequency);
+	  			  Lcd_cursor(&lcd, 0, 1);
+	  			  Lcd_int(&lcd, (int)frequency);
+	  		  }
+
+
+	  }//	end of FFT if
+
+ }// end of while
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
 
 
-//	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-//	  ADC_Value = Get_Adc();
-	  //printf("Digital Value of sine = %d\n", ADC_Value[0]);
-//	  for(int n = 0; n < 10; n ++){
-//		  printf("%d\r\n", ADC_Value[n]);
-//	  }
 
-  }
   /* USER CODE END 3 */
 }
 
@@ -288,31 +319,37 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-__weak void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-  /* Prevent unused argument(s) compilation warning */
-//  UNUSED(GPIO_Pin);
-  cnt ++;
-  Lcd_clear(store);
-
-  /* NOTE: This function should not be modified, when the callback is needed,
-           the HAL_GPIO_EXTI_Callback could be implemented in the user file
-   */
+		buttonState++;
+		if(buttonState > 2){
+			buttonState = 0;
+		}
 }
 
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-	if(i == FFT_LENGTH)
-	{
-		lastValue = 0;
-		return;
-	}
-	else
-	{
-		freq = 10000 * (i - lastValue);
-		lastValue = i;
-	}
-}
+//void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+//{
+//	if(htim == (&htim2)){
+//		if(i == FFT_LENGTH)
+//		{
+//			lastValue = 0;
+//			return;
+//		}
+//		else
+//		{
+//			freq = 10000 * (i - lastValue);
+//			lastValue = i;
+//		}
+//	}
+//
+//	if(htim == (&htim3)){
+//		if(comparatorFlag == 1){
+//			comparatorFrequency = 5 * cnt;
+//			printf("%5\r\n", comparatorFrequency);
+//			cnt = 0;
+//		}
+//	}
+//}
 
 /* USER CODE END 4 */
 
