@@ -30,8 +30,10 @@
 #include "../../MyLibrary/adc.h"
 #include "../../MyLibrary/fft.h"
 #include "../../MyLibrary/LCD.h"
+#include "../../MyLibrary/RS485.h"
 #include "arm_math.h"
 #include "arm_const_structs.h"
+
 
 //bool flag;
 /* USER CODE END Includes */
@@ -60,9 +62,12 @@
 	uint16_t comparatorFlag = 0;
 	int i = 0;
 	int lastValue = 0;
-	float32_t frequency = 0;
+	float frequency = 0;  //ADC output
 	uint16_t buttonState = 0;
 	uint16_t previousState = 0;
+	uint8_t trans_data[1] = {0};
+	int freq = 0, spd = 0;  //comparator outputs
+	int speed = 0;			//ADC outputs
 
 
 
@@ -83,17 +88,17 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-#ifdef __GNUC__
-#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-#else
-#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
-#endif
+//#ifdef __GNUC__
+//#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+//#else
+//#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+//#endif
 
-PUTCHAR_PROTOTYPE
-{
-  HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
-  return ch;
-}
+//PUTCHAR_PROTOTYPE
+//{
+//  HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
+//  return ch;
+//}
 /* USER CODE END 0 */
 
 /**
@@ -110,7 +115,7 @@ int main(void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+   HAL_Init();
 
   /* USER CODE BEGIN Init */
 
@@ -130,7 +135,9 @@ int main(void)
   MX_RTC_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
+  UART_HandleTypeDef huart1;
 
   //HAL_ADCEx_Calibration_Start(&hdac1);
   //HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&ADC_Value, FFT_LENGTH);
@@ -140,7 +147,7 @@ int main(void)
 
   	//LCD initialization
     Lcd_PortType ports[] = { GPIOC, GPIOB, GPIOA, GPIOA };
-    Lcd_PinType pins[] = {GPIO_PIN_7, GPIO_PIN_6, GPIO_PIN_9, GPIO_PIN_6};
+    Lcd_PinType pins[] = {GPIO_PIN_9, GPIO_PIN_6, GPIO_PIN_12, GPIO_PIN_6};
     Lcd_HandleTypeDef lcd;
 
     lcd = Lcd_create(ports, pins, GPIOB, GPIO_PIN_5, GPIOB, GPIO_PIN_4, LCD_4_BIT_MODE);
@@ -161,6 +168,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
   while (1)
   {
 	  if(buttonState == 0){
@@ -181,7 +189,7 @@ int main(void)
 	  	  while(__HAL_TIM_GET_COUNTER(&htim3) - timer3Val < 10000){
 			  comparatorFlag = 1;
 			  uint16_t current_state;
-			  current_state = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8);  //PB8
+			  current_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_3);  //PB8 -> PC3
 
 			  if(current_state != previous_state){
 				  pin_flag = 1;
@@ -197,9 +205,20 @@ int main(void)
 				  previous_state = current_state;
 	  	  }
 
-	  	  printf("Comp Freq: %d\r\n", cnt/=2);
+
+	  	  freq = cnt/2;
+	  	  //printf("Comp Freq: %d\r\n", freq);
+
 		  Lcd_cursor(&lcd, 0, 1);
-		  Lcd_int(&lcd, (int)(cnt/=2));
+		  Lcd_string(&lcd, "Freq:");
+		  Lcd_cursor(&lcd, 0, 7);
+		  Lcd_int(&lcd, freq);
+		  Lcd_cursor(&lcd, 1, 1);
+		  Lcd_string(&lcd, "Speed:");
+		  Lcd_cursor(&lcd, 0, 8);
+		  Lcd_int(&lcd, spd);
+
+		  RS485_Data_Transmit(spd, trans_data);
 
 	  	  cnt = 0;
 	  	  timer3Val = __HAL_TIM_GET_COUNTER(&htim3);
@@ -247,15 +266,23 @@ int main(void)
 	  		  //printf("%.4f %d\r\n", Buff_Out[index], index);
 
 	  		  frequency = index * 250000.0 / FFT_LENGTH / 2.5;
+	  		  speed = frequency / 70;
 
 	  		  //Display frequency on LCD
 	  		  if(frequency < 3000){
-	  			  printf("FFT: %d    ||    ", (int)frequency);
+	  			  //printf("FFT: %d    ||    ", (int)frequency);
 	  			  Lcd_cursor(&lcd, 0, 1);
+	  			  Lcd_string(&lcd, "Freq:");
+	  			  Lcd_cursor(&lcd, 0, 7);
 	  			  Lcd_int(&lcd, (int)frequency);
+	  			  Lcd_cursor(&lcd, 1, 1);
+	  			  Lcd_string(&lcd, "Speed:");
+	  			  Lcd_cursor(&lcd, 0, 8);
+	  			  Lcd_int(&lcd, (int)speed);
+
+	  			  //Transmit RS485 data
+	  			  RS485_Data_Transmit(speed, trans_data);
 	  		  }
-
-
 	  }//	end of FFT if
 
  }// end of while

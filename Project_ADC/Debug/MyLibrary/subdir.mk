@@ -6,16 +6,19 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../MyLibrary/LCD.c \
+../MyLibrary/RS485.c \
 ../MyLibrary/adc.c \
 ../MyLibrary/fft.c 
 
 OBJS += \
 ./MyLibrary/LCD.o \
+./MyLibrary/RS485.o \
 ./MyLibrary/adc.o \
 ./MyLibrary/fft.o 
 
 C_DEPS += \
 ./MyLibrary/LCD.d \
+./MyLibrary/RS485.d \
 ./MyLibrary/adc.d \
 ./MyLibrary/fft.d 
 
@@ -27,7 +30,7 @@ MyLibrary/%.o MyLibrary/%.su: ../MyLibrary/%.c MyLibrary/subdir.mk
 clean: clean-MyLibrary
 
 clean-MyLibrary:
-	-$(RM) ./MyLibrary/LCD.d ./MyLibrary/LCD.o ./MyLibrary/LCD.su ./MyLibrary/adc.d ./MyLibrary/adc.o ./MyLibrary/adc.su ./MyLibrary/fft.d ./MyLibrary/fft.o ./MyLibrary/fft.su
+	-$(RM) ./MyLibrary/LCD.d ./MyLibrary/LCD.o ./MyLibrary/LCD.su ./MyLibrary/RS485.d ./MyLibrary/RS485.o ./MyLibrary/RS485.su ./MyLibrary/adc.d ./MyLibrary/adc.o ./MyLibrary/adc.su ./MyLibrary/fft.d ./MyLibrary/fft.o ./MyLibrary/fft.su
 
 .PHONY: clean-MyLibrary
 

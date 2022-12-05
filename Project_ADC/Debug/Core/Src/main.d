@@ -37,6 +37,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Core/Inc/adc.h ../Core/Inc/main.h ../Core/Inc/rtc.h ../Core/Inc/tim.h \
  ../Core/Inc/usart.h ../Core/Inc/gpio.h ../Core/Src/../../MyLibrary/adc.h \
  ../Core/Src/../../MyLibrary/fft.h ../Core/Src/../../MyLibrary/LCD.h \
+ ../Core/Src/../../MyLibrary/RS485.h \
  D:/ST/WorkSpace/Project_ADC/Drivers/CMSIS/DSP/Include/arm_math.h \
  C:/Users/Razer/STM32Cube/Repository/STM32Cube_FW_L4_V1.17.2/Drivers/CMSIS/Include/cmsis_compiler.h \
  D:/ST/WorkSpace/Project_ADC/Drivers/CMSIS/DSP/Include/arm_const_structs.h \
@@ -87,6 +88,7 @@ C:/Users/Razer/STM32Cube/Repository/STM32Cube_FW_L4_V1.17.2/Drivers/STM32L4xx_HA
 ../Core/Src/../../MyLibrary/adc.h:
 ../Core/Src/../../MyLibrary/fft.h:
 ../Core/Src/../../MyLibrary/LCD.h:
+../Core/Src/../../MyLibrary/RS485.h:
 D:/ST/WorkSpace/Project_ADC/Drivers/CMSIS/DSP/Include/arm_math.h:
 C:/Users/Razer/STM32Cube/Repository/STM32Cube_FW_L4_V1.17.2/Drivers/CMSIS/Include/cmsis_compiler.h:
 D:/ST/WorkSpace/Project_ADC/Drivers/CMSIS/DSP/Include/arm_const_structs.h:

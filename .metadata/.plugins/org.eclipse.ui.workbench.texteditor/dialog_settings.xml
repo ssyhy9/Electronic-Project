@@ -6,8 +6,13 @@
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
-		<item key="selection" value="ADC_Value"/>
+		<item key="selection" value="uart"/>
 		<list key="findhistory">
+			<item value="uart"/>
+			<item value="7"/>
+			<item value="HAL_GPIO"/>
+			<item value="printf"/>
+			<item value="comparator"/>
 			<item value="ADC_Value"/>
 			<item value="nums"/>
 			<item value="arm_cfft_f32"/>
@@ -18,9 +23,6 @@
 			<item value="fft_handler"/>
 			<item value="rfft_fast_init"/>
 			<item value="rfft_fast"/>
-			<item value="rfft"/>
-			<item value="arm_cfft"/>
-			<item value="fft"/>
 		</list>
 		<list key="replacehistory">
 			<item value="Buff_Out"/>
@@ -28,8 +30,8 @@
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
-		<item key="DIALOG_X_ORIGIN" value="105"/>
-		<item key="DIALOG_Y_ORIGIN" value="241"/>
+		<item key="DIALOG_X_ORIGIN" value="213"/>
+		<item key="DIALOG_Y_ORIGIN" value="279"/>
 		<item key="DIALOG_WIDTH" value="369"/>
 		<item key="DIALOG_HEIGHT" value="454"/>
 		<item key="DIALOG_FONT_NAME" value="1|Microsoft YaHei UI|9.0|0|WINDOWS|1|-15|0|0|0|400|0|0|0|1|0|0|0|0|Microsoft YaHei UI"/>

@@ -1,0 +1,2 @@
+../MyLibrary/RS485.c:8:6:RS485_Data_Transmit	16	static
+../MyLibrary/RS485.c:14:6:encode_transmit_data	16	static

@@ -2,3 +2,11 @@ cnt
 ADC_Value
 Buff_In
 ADC_In
+i
+freq
+lastValue
+frequency
+comparatorFrequency
+buttonState
+previousState
+speed
